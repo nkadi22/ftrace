@@ -1,0 +1,110 @@
+﻿{
+  "animals": [
+    {
+      "Name": "Cow2",
+      "Type": "Cow",
+      "Genre": "Female",
+      "MilkProduced": 25,
+      "FoodQuantity": 20,
+      "FoodUsage": [
+        {
+          "Year": 2022,
+          "Month": 1,
+          "Quantity": 15
+        },
+        {
+          "Year": 2022,
+          "Month": 2,
+          "Quantity": 18
+        },
+        {
+          "Year": 2022,
+          "Month": 3,
+          "Quantity": 17
+        }
+      ],
+      "MilkProduction": [
+        {
+          "Year": 2022,
+          "Month": 1,
+          "Quantity": 20
+        },
+        {
+          "Year": 2022,
+          "Month": 2,
+          "Quantity": 21
+        },
+        {
+          "Year": 2022,
+          "Month": 3,
+          "Quantity": 29
+        }
+      ]
+    },
+    {
+      "Name": "Goat3",
+      "Type": "Goat",
+      "Genre": "Male",
+      "MilkProduced": 4,
+      "FoodQuantity": 1,
+      "FoodUsage": [
+        {
+          "Year": 2022,
+          "Month": 1,
+          "Quantity": 1
+        },
+        {
+          "Year": 2022,
+          "Month": 2,
+          "Quantity": 2
+        },
+        {
+          "Year": 2022,
+          "Month": 3,
+          "Quantity": 3
+        }
+      ]
+    },
+    {
+      "Name": "Goat4",
+      "Type": "Goat",
+      "Genre": "Female",
+      "MilkProduced": 6,
+      "FoodQuantity": 3,
+      "FoodUsage": [
+        {
+          "Year": 2022,
+          "Month": 1,
+          "Quantity": 1
+        },
+        {
+          "Year": 2022,
+          "Month": 2,
+          "Quantity": 2
+        },
+        {
+          "Year": 2022,
+          "Month": 3,
+          "Quantity": 3
+        }
+      ],
+      "MilkProduction": [
+        {
+          "Year": 2022,
+          "Month": 1,
+          "Quantity": 4
+        },
+        {
+          "Year": 2022,
+          "Month": 2,
+          "Quantity": 2
+        },
+        {
+          "Year": 2022,
+          "Month": 3,
+          "Quantity": 4
+        }
+      ]
+    }
+  ]
+}
