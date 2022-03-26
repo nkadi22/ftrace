@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FarmTraceWebServer.Dto
 {
+    /// <summary>
+    /// Food usage data transfer object
+    /// </summary>
     public class FoodUsageDto
     {
         /// <summary>
@@ -24,11 +27,18 @@ namespace FarmTraceWebServer.Dto
         /// <example>3</example>
         public float Quantity { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public FoodUsageDto()
         {
             
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="foodUsage"></param>
         public FoodUsageDto(FoodUsage foodUsage)
         {
             Year = foodUsage.Year;

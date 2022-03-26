@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FarmTraceWebServer.Dto
 {
+    /// <summary>
+    /// Animal data transfer object
+    /// </summary>
     public class AnimalDto
     {
         /// <summary>
@@ -37,8 +40,17 @@ namespace FarmTraceWebServer.Dto
         /// </summary>
         public List<MilkProductionDto> MilkProductions { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public AnimalDto() { }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="animal"></param>
+        /// <param name="includeFoodUsage"></param>
+        /// <param name="includeProduction"></param>
         public AnimalDto(Animal animal, bool includeFoodUsage = true, bool includeProduction = true)
         {
             AnimalId = animal.AnimalId;

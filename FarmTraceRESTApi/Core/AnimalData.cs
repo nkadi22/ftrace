@@ -9,19 +9,41 @@ using System.Threading.Tasks;
 
 namespace FarmTraceWebServer.Core
 {
+    /// IAnimalData interface
     public interface IAnimalData
     {
+        /// <summary>
+        /// Imports valid animal data to memory. 
+        /// </summary>
+        /// <returns></returns>
         void Init();
+        /// <summary>
+        /// Retrieves the animal data stored in memory. 
+        /// </summary>
+        /// <returns></returns>
         List<Animal> SelectAllAnimals();
     }
+
+    /// AnimalData class
     public class AnimalData: IAnimalData
     {
+        /// Whether the data has been imported
         public static bool DataImported = false;
+        /// List of animals
         public List<Animal> Animals { get; } = new List<Animal>();
+
+        /// <summary>
+        /// Imports valid animal data to memory. 
+        /// </summary>
+        /// <returns></returns>
         public void Init()
         {
-            //dynamic array = JsonConvert.Dd
             var path = Directory.GetCurrentDirectory() + "\\Data\\data.json";
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
             using (StreamReader r = new StreamReader(path))
             {
                 string json = r.ReadToEnd();
@@ -49,7 +71,7 @@ namespace FarmTraceWebServer.Core
                     }
                     else
                     {
-                        //Could not identify the genre, ask the team
+                        //Could not identify the genre, ignore animal
                         continue;
                     }
 
@@ -57,13 +79,11 @@ namespace FarmTraceWebServer.Core
                     foreach (var foodUsage in animal.FoodUsage)
                     {
                         int quantity = 0;
-                        /*validation*/
                         if (myAnimal.Type == AnimalType.Cow)
                         {
                             //including the zero and the 30?
                             if (foodUsage.Quantity < 0 || foodUsage.Quantity > 30)
                             {
-                                //Logs
                                 continue;
                             }
 
@@ -71,10 +91,8 @@ namespace FarmTraceWebServer.Core
                         }
                         else if (myAnimal.Type == AnimalType.Goat)
                         {
-                            //including the zero and the 30?
                             if (foodUsage.Quantity < 0 || foodUsage.Quantity > 3)
                             {
-                                //Logs
                                 continue;
                             }
 
@@ -97,7 +115,7 @@ namespace FarmTraceWebServer.Core
 
                     if (myAnimal.Gender == AnimalGenre.Female)
                     {
-                        // Food quantity validation
+                        // Milk production validation
                         foreach (var milkProduction in animal.MilkProduction)
                         {
                             int quantity = 0;
@@ -128,38 +146,61 @@ namespace FarmTraceWebServer.Core
             }
         }
 
+        /// <summary>
+        /// Retrieves the animal data stored in memory. 
+        /// </summary>
+        /// <returns></returns>
         public List<Animal> SelectAllAnimals()
         {
             return Animals;
         }
     }
 
+    /// <summary>
+    /// Database context
+    /// </summary>
     public class FarmTraceDatabaseContext : DbContext, IFarmTraceDatabaseContext
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public FarmTraceDatabaseContext() : base()
         {
             //Database.SetInitializer(new DropCreateDatabaseAlways<FarmTraceDatabaseContext>());
             Database.SetInitializer<FarmTraceDatabaseContext>(null);
         }
 
+        /// <summary>
+        /// Composite primary keys
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<FoodUsage>().HasKey(c => new { c.AnimalId, c.Year, c.Month });
             modelBuilder.Entity<MilkProduction>().HasKey(c => new { c.AnimalId, c.Year, c.Month });
         }
 
+        /// <summary>
+        /// Database Animal table
+        /// </summary>
         public DbSet<Animal> Animals
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Food Usage table
+        /// </summary>
         public DbSet<FoodUsage> FoodUsages
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Milk Production table
+        /// </summary>
         public DbSet<MilkProduction> MilkProductions
         {
             get;

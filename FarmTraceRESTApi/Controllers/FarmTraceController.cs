@@ -23,6 +23,13 @@ namespace FarmTraceWebServer.Controllers
         private readonly IAnimalData _animalData;
         private readonly IFarmTraceDatabaseContext _dbContext;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="logger">Logger object.</param>
+        /// <param name="animalData">Object that keeps animal data (read from the input file) in memory.</param>
+        /// <param name="dbContext">EF Database context for the app.</param>
+        /// <returns></returns>
         public FarmTraceController(ILogger<FarmTraceController> logger, IAnimalData animalData, IFarmTraceDatabaseContext dbContext)
         {
             _logger = logger;
