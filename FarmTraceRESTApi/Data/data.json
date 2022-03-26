@@ -10,34 +10,34 @@
         {
           "Year": 2022,
           "Month": 1,
-          "Quantity": 15
+          "Quantity": 15.6
         },
         {
           "Year": 2022,
           "Month": 2,
-          "Quantity": 18
+          "Quantity": 17
         },
         {
           "Year": 2022,
           "Month": 3,
-          "Quantity": 17
+          "Quantity": 16
         }
       ],
       "MilkProduction": [
         {
           "Year": 2022,
           "Month": 1,
-          "Quantity": 20
+          "Quantity": 20.5
         },
         {
           "Year": 2022,
           "Month": 2,
-          "Quantity": 21
+          "Quantity": 21.99
         },
         {
           "Year": 2022,
           "Month": 3,
-          "Quantity": 29
+          "Quantity": 28
         }
       ]
     },
@@ -51,17 +51,17 @@
         {
           "Year": 2022,
           "Month": 1,
-          "Quantity": 1
+          "Quantity": 1.1
         },
         {
           "Year": 2022,
           "Month": 2,
-          "Quantity": 2
+          "Quantity": 2.3
         },
         {
           "Year": 2022,
           "Month": 3,
-          "Quantity": 3
+          "Quantity": 3.2
         }
       ]
     },
@@ -97,12 +97,12 @@
         {
           "Year": 2022,
           "Month": 2,
-          "Quantity": 2
+          "Quantity": 2.12
         },
         {
           "Year": 2022,
           "Month": 3,
-          "Quantity": 4
+          "Quantity": 4.15
         }
       ]
     }

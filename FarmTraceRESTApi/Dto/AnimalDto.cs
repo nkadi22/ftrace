@@ -8,19 +8,43 @@ namespace FarmTraceWebServer.Dto
 {
     public class AnimalDto
     {
+        /// <summary>
+        /// Animal Id
+        /// </summary>
+        /// <example>1</example>
         public int AnimalId { get; set; }
+        /// <summary>
+        /// Animal Name
+        /// </summary>
+        /// <example>Milky Cow</example>
         public string Name { get; set; }
+        /// <summary>
+        /// Animal Type
+        /// </summary>
+        /// <example>Cow</example>
         public string Type { get; set; }
-        public string Genre { get; set; }
+        /// <summary>
+        /// Animal Gender
+        /// </summary>
+        /// <example>1</example>
+        public string Gender { get; set; }
+        /// <summary>
+        /// List of food consumption
+        /// </summary>
         public List<FoodUsageDto> FoodUsages { get; set; }
+        /// <summary>
+        /// List of Milk Production
+        /// </summary>
         public List<MilkProductionDto> MilkProductions { get; set; }
+
+        public AnimalDto() { }
 
         public AnimalDto(Animal animal, bool includeFoodUsage = true, bool includeProduction = true)
         {
             AnimalId = animal.AnimalId;
             Name = animal.Name;
             Type = animal.Type.ToString();
-            Genre = animal.Genre.ToString();
+            Gender = animal.Gender.ToString();
             FoodUsages = new List<FoodUsageDto>();
             MilkProductions = new List<MilkProductionDto>();
 
@@ -32,7 +56,7 @@ namespace FarmTraceWebServer.Dto
                 }
             }
 
-            if (includeProduction && animal.MilkProductions != null && animal.Genre == AnimalGenre.Female && animal.MilkProductions.Count > 0)
+            if (includeProduction && animal.MilkProductions != null && animal.Gender == AnimalGenre.Female && animal.MilkProductions.Count > 0)
             {
                 foreach (var milkProduction in animal.MilkProductions)
                 {

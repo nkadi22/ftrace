@@ -29,7 +29,7 @@ namespace FarmTraceWebServer.Core
                 foreach (var animal in array.animals)
                 {
                     AnimalType aType;
-                    AnimalGenre aGenre;
+                    AnimalGenre aGender;
 
                     Animal myAnimal = new Animal();
                     myAnimal.Name = animal.Name;
@@ -43,9 +43,9 @@ namespace FarmTraceWebServer.Core
                         continue;
                     }
 
-                    if (Enum.TryParse<AnimalGenre>((string)animal.Genre, true, out aGenre))
+                    if (Enum.TryParse<AnimalGenre>((string)animal.Genre, true, out aGender))
                     {
-                        myAnimal.Genre = aGenre;
+                        myAnimal.Gender = aGender;
                     }
                     else
                     {
@@ -95,7 +95,7 @@ namespace FarmTraceWebServer.Core
 
                     
 
-                    if (myAnimal.Genre == AnimalGenre.Female)
+                    if (myAnimal.Gender == AnimalGenre.Female)
                     {
                         // Food quantity validation
                         foreach (var milkProduction in animal.MilkProduction)

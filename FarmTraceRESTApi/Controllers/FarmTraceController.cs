@@ -4,10 +4,13 @@ using FarmTraceWebServer.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.Examples;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FarmTraceWebServer.Controllers
@@ -16,11 +19,6 @@ namespace FarmTraceWebServer.Controllers
     [Route("[controller]")]
     public class FarmTraceController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<FarmTraceController> _logger;
         private readonly IAnimalData _animalData;
         private readonly IFarmTraceDatabaseContext _dbContext;
@@ -33,10 +31,17 @@ namespace FarmTraceWebServer.Controllers
             _dbContext = dbContext;
         }
 
+        /// <summary>
+        /// Retrieves all existing animal data
+        /// </summary>
+        /// <param name="imported">True indicates that data will be read from database. False indicates that data will be based on the input file 'data.json'.</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Animal data was sucessufully retrieved", Type = typeof(AnimalDto))]
         [HttpGet]
         public IEnumerable<AnimalDto> Get(bool imported = false)
         {
-            List<Animal> list = imported ? _dbContext.Animals.Include("FoodUsages").Include("MilkProductions").ToList() : _animalData.SelectAllAnimals();
+            List<Animal> list = imported ? _dbContext.Animals.Include("FoodUsages").Include("MilkProductions").ToList() : ((dynamic)putIdsOnInMemoryData()).Animals;
             List<AnimalDto> ret = new List<AnimalDto>();
 
             if (list != null)
@@ -50,10 +55,23 @@ namespace FarmTraceWebServer.Controllers
             return ret;
         }
 
+        /// <summary>
+        /// Retrieves data from a specific animal
+        /// </summary>
+        /// <param name="id">The Animal Id.</param>
+        /// <param name="imported">Indicates the source of the data: true -> database, false -> file 'data.json'</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Animal data was sucessufully retrieved", Type = typeof(AnimalDto))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound,
+            "Animal was not found on the database")]
         [HttpGet("{id}")]
-        public ActionResult<Animal> GetSpecificAnimalDataFromDB(int id)
+        public ActionResult<Animal> GetSpecificAnimalDataFromDB(int id, bool imported = false)
         {
-            Animal animal = _dbContext.Animals.Include("FoodUsages").Include("MilkProductions").FirstOrDefault(row => row.AnimalId == id);
+            dynamic memoryData = putIdsOnInMemoryData();
+            List<Animal> animalsFromFile = memoryData.Animals;
+            Animal animal = imported ? _dbContext.Animals.Include("FoodUsages").Include("MilkProductions").FirstOrDefault(row => row.AnimalId == id)
+                                        : System.Linq.Enumerable.FirstOrDefault(animalsFromFile, a => a.AnimalId == id);
             
             if (animal != null)
             {
@@ -64,6 +82,18 @@ namespace FarmTraceWebServer.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Retrieves data from a specific animal by name
+        /// </summary>
+        /// <param name="name">The Animal name.</param>
+        /// <param name="imported">True indicates that data will be read from database. False indicates that data will be based on the input file 'data.json'.</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Animal data was sucessufully retrieved", Type = typeof(AnimalDto))]
+        [SwaggerResponse((int)HttpStatusCode.NotFound,
+            "Animal was not found on the database")]
+        [SwaggerResponse((int)HttpStatusCode.BadRequest,
+            "Animal name not provided.")]
         [HttpGet("getanimalbyname")]
         public ActionResult<Animal> GetSpecificAnimalDataDataByName(string name, bool imported = false)
         {
@@ -84,6 +114,17 @@ namespace FarmTraceWebServer.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Deletes a specific Animal by Id (from database only).
+        /// </summary>
+        /// <param name="id">The Animal id</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.NotFound,
+            "Animal does not exist")]
+        [SwaggerResponse((int)HttpStatusCode.InternalServerError,
+            "Error while deleting the Animal data")]
+        [SwaggerResponse((int)HttpStatusCode.NoContent,
+            "Animal deleted successfully")]
         [HttpDelete("{id}")]
         public ActionResult DeleteAnimal(int id)
         {
@@ -109,6 +150,16 @@ namespace FarmTraceWebServer.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// ReportA: Total production of milk per animal type for a period.
+        /// </summary>
+        /// <param name="imported">Indicates the source of the data: true -> database, false -> file 'data.json'</param>
+        /// <param name="value">Time interval of the report</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.BadRequest,
+            "Time interval is not valid")]
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Report has been successfully generated")]
         [HttpGet("ReportA")]
         public ActionResult<List<ReportADto>> GetTotalProductionPerAnimal(bool imported, [FromBody] Period value)
         {
@@ -152,6 +203,13 @@ namespace FarmTraceWebServer.Controllers
             return Ok(ret);
         }
 
+        /// <summary>
+        /// ReportB: Total amount of food used per animal type.
+        /// </summary>
+        /// <param name="imported">Indicates the source of the data: true -> database, false -> file 'data.json'</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Report has been successfully generated")]
         [HttpGet("ReportB")]
         public ActionResult<List<ReportBDto>> GetTotalAmountOfFoodPerAnimal(bool imported)
         {
@@ -188,6 +246,13 @@ namespace FarmTraceWebServer.Controllers
             return Ok(ret);
         }
 
+        /// <summary>
+        /// ReportC: Best producing animals.
+        /// </summary>
+        /// <param name="imported">Indicates the source of the data: true -> database, false -> file 'data.json'</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Report has been successfully generated")]
         [HttpGet("ReportC")]
         public ActionResult<List<ReportCDto>> GetBestProducingAnimals(bool imported)
         {
@@ -228,6 +293,16 @@ namespace FarmTraceWebServer.Controllers
             return Ok(ret);
         }
 
+        /// <summary>
+        /// ReportD: Average production for a period.
+        /// </summary>
+        /// <param name="imported">Indicates the source of the data: true -> database, false -> file 'data.json'</param>
+        /// <param name="value">Time interval of the report</param>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.BadRequest,
+            "Time interval is not valid")]
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Report has been successfully generated")]
         [HttpGet("ReportD")]
         public ActionResult<ReportDDto> GetAverageProductionForAPeriod(bool imported, [FromBody] Period value)
         {
@@ -268,6 +343,12 @@ namespace FarmTraceWebServer.Controllers
             return Ok(ret);
         }
 
+        /// <summary>
+        /// Import data on the file 'data.json' to database. Already existing Animals will be skipped.
+        /// </summary>
+        /// <returns></returns>
+        [SwaggerResponse((int)HttpStatusCode.OK,
+            "Animal data was sucessufully imported", Type = typeof(AnimalDto))]
         [HttpPost("import")]
         public ActionResult ImportData()
         {

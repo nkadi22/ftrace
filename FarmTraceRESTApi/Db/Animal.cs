@@ -11,7 +11,7 @@ namespace FarmTraceWebServer.Db
         public int AnimalId { get; set; }
         public string Name { get; set; }
         public AnimalType Type { get; set; }
-        public AnimalGenre Genre { get; set; }
+        public AnimalGenre Gender { get; set; }
         /*public float MilkProduced { get; set; }
         public float FoodQuantity { get; set; }*/
 
